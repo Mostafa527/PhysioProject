@@ -16,7 +16,12 @@ class UserSerializer(serializers.ModelSerializer):
             'password': {'write_only': True},
             'password2': {'write_only': True},
         }
+        
+    '''
+    Use pop() when you need one time validation check & will not use the data further.
+•	And use get(), when you need validation check & also save data in database.
 
+    '''
     def validate(self, data):
         password = data.get('password')
         confirm_password = data.pop('password2')
