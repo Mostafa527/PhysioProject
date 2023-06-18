@@ -2,8 +2,9 @@ from django.conf import settings
 from Accounts.models import NewUser
 from rest_framework.exceptions import ValidationError
 from PhysioProj import settings
+from django.contrib import auth
+from rest_framework import serializers,exceptions
 
-from rest_framework import serializers
 class UserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(
         style={'input_type': 'password'}
@@ -16,7 +17,7 @@ class UserSerializer(serializers.ModelSerializer):
             'password': {'write_only': True},
             'password2': {'write_only': True},
         }
-        
+
     '''
     Use pop() when you need one time validation check & will not use the data further.
 •	And use get(), when you need validation check & also save data in database.
@@ -77,3 +78,28 @@ class UserSerializer(serializers.ModelSerializer):
         instance.set_password(instance.password)
         instance.save()
         return instance
+
+class LoginSerializer(serializers.Serializer):
+    email = serializers.CharField()
+    password = serializers.CharField()
+
+    def validate(self, data):
+        email = data.get("email", "")
+        password = data.get("password", "")
+
+        if email and password:
+            user = auth.authenticate(username=email, password=password)
+            if user:
+                if user.is_active:
+                    data["user"] = user
+                else:
+                    msg = "User is deactivated."
+                    raise exceptions.ValidationError(msg)
+            else:
+                msg = "Unable to login with given credentials."
+                raise exceptions.ValidationError(msg)
+        else:
+            msg = "Must provide username and password both."
+            raise exceptions.ValidationError(msg)
+        return data
+

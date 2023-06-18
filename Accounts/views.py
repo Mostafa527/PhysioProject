@@ -5,7 +5,13 @@ from rest_framework import  status
 from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework.decorators import  permission_classes
+from rest_framework.generics import GenericAPIView
+from rest_framework.authtoken.models import Token
+from django.contrib.auth import login as django_login, logout as django_logout
+from rest_framework.authentication import TokenAuthentication
+
 from django.http import Http404
+
 @permission_classes([AllowAny,])
 class RegisterView(APIView):
     def get(self, request):
@@ -52,3 +58,39 @@ class user_detail(APIView):
         snippet.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+class LoginView(GenericAPIView):
+    serializer_class = LoginSerializer
+
+    def post(self, request):
+        serializer = LoginSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data["user"]
+        django_login(request, user)
+        token, created = Token.objects.get_or_create(user=user)
+        django_login(request, user)
+        return Response({
+            'token': token.key,
+            'user_id': user.pk,
+            'email': user.email,
+            'is_staff':user.is_staff,
+            'is_admin':user.is_admin,
+            'is_patient':user.is_patient,
+            'is_doctor':user.is_doctor,
+            'user_type':user.user_type
+        })
+
+#Logout without Delete Token
+class LogoutView(APIView):
+    authentication_classes = (TokenAuthentication,)
+
+    def post(self, request):
+        django_logout(request)
+        return Response(status=204)
+
+#Logout and Delete Token
+#when Login again it will create a new Token
+class Logout(APIView):
+    def get(self, request, format=None):
+        request.user.auth_token.delete()
+        django_logout(request)
+        return Response(status=status.HTTP_200_OK)
