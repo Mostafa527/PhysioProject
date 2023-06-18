@@ -2,10 +2,8 @@ from django.conf import settings
 from Accounts.models import NewUser
 from rest_framework.exceptions import ValidationError
 from PhysioProj import settings
-from rest_framework import exceptions
-from django.contrib import auth
-from rest_framework import serializers
 
+from rest_framework import serializers
 class UserSerializer(serializers.ModelSerializer):
     password = serializers.CharField(
         style={'input_type': 'password'}
@@ -57,3 +55,20 @@ class UserSerializer(serializers.ModelSerializer):
             return user
         except Exception as e:
             return e
+    def update(self, instance, validated_data):
+
+        instance.username = validated_data.get('username', instance.username)
+        instance.first_name = validated_data.get('first_name', instance.first_name)
+        instance.last_name = validated_data.get('last_name', instance.last_name)
+        instance.email = validated_data.get('email', instance.email)
+        instance.Contact = validated_data.get('Contact', instance.Contact)
+        instance.Address = validated_data.get('Address', instance.Address)
+        #instance.user_type = validated_data.get('user_type', instance.user_type)
+        instance.password = validated_data.get('password', instance.password)
+        instance.user_type = validated_data.get(
+            'user_type',
+            'staff'
+        )
+        instance.set_password(instance.password)
+        instance.save()
+        return instance
