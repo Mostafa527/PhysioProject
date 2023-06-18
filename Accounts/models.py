@@ -50,5 +50,49 @@ class CustomAccountManager(BaseUserManager):
         user.save()
         return user
 
+#class NewUser that is inherited from AbstractBaseUser
+class NewUser(AbstractBaseUser, PermissionsMixin):
+    #_('email address') is Label
+    email = models.EmailField(_('email address'), unique=True)
+    username = models.CharField(max_length=150, unique=True)
+    first_name = models.CharField(max_length=150, blank=True,null=True)
+    last_name = models.CharField(max_length=150, blank=True,null=True)
+    #password2 field to ensure that password is correct
+    password2 = models.CharField(max_length=120)
+    Address = models.CharField(max_length=300)
+    Contact = models.CharField(max_length=25)
+    BirthDate =models.DateField(auto_now=False, blank=True, null=True)
+    start_date = models.DateTimeField(default=timezone.now)
+    about = models.TextField(_(
+        'about'), max_length=500, blank=True)
+
+
+    user_type = models.CharField(max_length=40, choices=USER_TYPE_CHOICES ,default=USER_TYPE_CHOICES[3][1],blank=True,null=True)
+
+    #fields to know if user patient or doctor or admin and this fields will be updated
+    #in all classes inherited from user class
+    is_staff = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True)
+    is_admin = models.BooleanField(default=False)
+    is_patient = models.BooleanField(default=False)
+    is_doctor = models.BooleanField(default=False)
+    objects = CustomAccountManager()
+
+    #instead of username field it will take email field
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = ['username', 'first_name']
+
+    def __str__(self):
+        return self.username
+
+#the job of this Method is to create Token Automatically when event occured
+@receiver(post_save, sender=settings.AUTH_USER_MODEL)
+def create_auth_token(sender, instance=None, created=False, **kwargs):
+    if created:
+        Token.objects.create(user=instance)
+
+    for user in NewUser.objects.all():
+        Token.objects.get_or_create(user=user)
+
 
 
