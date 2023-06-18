@@ -81,7 +81,7 @@ DATABASES = {
     }
 }
 
-AUTH_USER_MODEL = 'Account.NewUser'
+AUTH_USER_MODEL = 'Accounts.NewUser'
 
 
 # Password validation
