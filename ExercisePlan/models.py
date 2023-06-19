@@ -2,7 +2,7 @@ from django.db import models
 from Physiotherapist.models import Physiotherapist
 from Patient.models import Patient
 from Game.models import Game
-class ExercisePlan(models.Model):
+class Exercise_Plan(models.Model):
     DateOfStart=models.DateField(blank=False)
     DateOfEnd=models.DateField(blank=False)
     RepitionNum = models.PositiveIntegerField(blank=False)
