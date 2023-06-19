@@ -45,7 +45,8 @@ INSTALLED_APPS = [
     'ClinicAdmin',
     'Physiotherapist',
     'Patient',
-    'Game'
+    'Game',
+    'ExercisePlan',
 ]
 
 MIDDLEWARE = [
