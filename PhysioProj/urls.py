@@ -24,6 +24,7 @@ urlpatterns = [
     path('', include('Physiotherapist.urls')),
     path('', include('Patient.urls')),
     path('',include('Game.urls')),
-    path('', include('ExercisePlan.urls'))
+    path('', include('ExercisePlan.urls')),
+    path('', include('Session.urls'))
 
 ]
