@@ -1,5 +1,5 @@
 
-
+from Patient.models import Patient
 from rest_framework import status
 from rest_framework.response import Response
 from .models import *
@@ -47,7 +47,20 @@ class PhysioList(APIView):
             return Response(serializer.data , status=status.HTTP_201_CREATED)
         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
 
+@api_view(['GET'])
+def therpyDetailsByPatient(request,patient_id):
+    try:
+        patient = Patient.objects.get(pk=patient_id)
+    except Patient.DoesNotExist:
+        return Response({'message': 'The Patient does not exist'}, status=status.HTTP_404_NOT_FOUND)
 
+    if request.method == 'GET':
+        try:
+            physiotherapist=Physiotherapist.objects.get(pk=patient.Physio_Patient.pk)
+        except Physiotherapist.DoesNotExist:
+            return Response({'message': 'The Physiotherapist does not exist'}, status=status.HTTP_404_NOT_FOUND)
+        physiotherapist_serializer = PhysioProfileSerializer(physiotherapist)
+        return Response(physiotherapist_serializer.data)
 
 #Get Therapist Details Using Clinic ID
 @api_view(['GET'])
