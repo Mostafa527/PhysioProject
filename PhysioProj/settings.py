@@ -48,7 +48,8 @@ INSTALLED_APPS = [
     'Game',
     'ExercisePlan',
     'Session',
-    'Observation'
+    'Observation',
+    'Scores'
 ]
 
 MIDDLEWARE = [
