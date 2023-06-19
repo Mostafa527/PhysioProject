@@ -26,6 +26,7 @@ urlpatterns = [
     path('',include('Game.urls')),
     path('', include('ExercisePlan.urls')),
     path('', include('Session.urls')),
-    path('', include('Observation.urls'))
+    path('', include('Observation.urls')),
+    path('', include('Scores.urls'))
 
 ]
