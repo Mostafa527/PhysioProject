@@ -43,7 +43,8 @@ INSTALLED_APPS = [
     'Accounts',
     'Clinic',
     'ClinicAdmin',
-    'Physiotherapist'
+    'Physiotherapist',
+    'Patient'
 ]
 
 MIDDLEWARE = [
